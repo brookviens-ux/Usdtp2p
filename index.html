@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>USDT P2P Exchange – Pro</title>
+<style>
+body{margin:0;font-family:Inter,Arial;background:#0b0e11;color:#eaecef}
+header,nav{background:#181a20;border-bottom:1px solid #2b3139}
+header{text-align:center;padding:15px}
+nav{display:flex;justify-content:center;gap:25px;padding:12px}
+nav a{color:#f0b90b;font-weight:600;cursor:pointer}
+nav a:hover{text-decoration:underline}
+.container{padding:20px}
+.hidden{display:none}
+.card{background:#181a20;border:1px solid #2b3139;border-radius:10px;padding:20px;max-width:450px;margin:auto}
+input,select,button{width:100%;padding:12px;margin-top:10px;background:#0b0e11;color:#eaecef;border:1px solid #2b3139;border-radius:6px}
+button{background:#f0b90b;color:#000;font-weight:bold;cursor:pointer}
+button:hover{opacity:.9}
+.table{width:100%;border-collapse:collapse;margin-top:20px}
+.table th,.table td{border-bottom:1px solid #2b3139;padding:12px;text-align:center}
+.table th{color:#f0b90b}
+.popup-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;justify-content:center;align-items:center}
+.popup{background:#181a20;border:1px solid #2b3139;border-radius:10px;padding:20px;max-width:420px;text-align:center}
+.timer{color:#f87171;font-weight:bold}
+footer{text-align:center;padding:15px;border-top:1px solid #2b3139;margin-top:30px}
+.badge{background:#16a34a;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px}
+</style>
+</head>
+<body><header>
+<h1>USDT P2P Exchange</h1>
+<p>Professional Binance‑Style Platform</p>
+</header><!-- LOGIN --><div id="loginPage" class="container">
+<div class="card">
+<h2>OTP Login</h2>
+<input placeholder="Email" />
+<input placeholder="Mobile Number" />
+<button onclick="sendOTP()">Send OTP</button>
+<div id="otpBox" class="hidden">
+<input placeholder="Enter OTP (123456)" />
+<button onclick="login()">Verify</button>
+</div>
+</div>
+</div><!-- MAIN --><div id="main" class="hidden">
+<nav>
+<a onclick="tab('market')">P2P Market</a>
+<a onclick="tab('buy')">Buy</a>
+<a onclick="tab('sell')">Sell</a>
+<a onclick="tab('wallet')">Wallet</a>
+<a onclick="tab('history')">History</a>
+<a onclick="tab('admin')">Admin</a>
+</nav><div class="container"><!-- MARKET --><div id="market" class="tab">
+<h2>Live USDT Price: <span id="price">--</span></h2>
+<table class="table">
+<tr><th>Trader</th><th>Price</th><th>Limits</th><th>Payment</th><th></th></tr>
+<tr>
+<td>Verified Merchant <span class="badge">✔</span></td>
+<td id="rowPrice">--</td>
+<td>₹8,300 – ₹1,00,000</td>
+<td>UPI</td>
+<td><button onclick="trade()">Trade</button></td>
+</tr>
+</table>
+</div><!-- BUY --><div id="buy" class="tab hidden">
+<div class="card">
+<h3>Buy USDT</h3>
+<input id="buyInr" placeholder="INR" oninput="calcBuy()" />
+<input id="buyUsdt" placeholder="USDT" readonly />
+<select><option>UPI</option></select>
+<p>Pay using UPI QR below</p>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=UPI-DEMO" />
+<p class="timer">Complete payment in: <span id="timer">300</span>s</p>
+<button onclick="trade()">Confirm Buy</button>
+</div>
+</div><!-- SELL --><div id="sell" class="tab hidden">
+<div class="card">
+<h3>Sell USDT</h3>
+<input id="sellUsdt" placeholder="USDT" oninput="calcSell()" />
+<input id="sellInr" placeholder="INR" readonly />
+<select><option>UPI</option><option>USDT</option></select>
+<input placeholder="Your USDT Wallet Address" />
+<button onclick="trade()">Confirm Sell</button>
+</div>
+</div><!-- WALLET --><div id="wallet" class="tab hidden">
+<div class="card">
+<h3>Your Wallet</h3>
+<p>USDT Balance: <b>100.00</b></p>
+<p>INR Balance: <b>₹8,300</b></p>
+</div>
+</div><!-- HISTORY --><div id="history" class="tab hidden">
+<h3>Transaction History</h3>
+<table class="table">
+<tr><th>Type</th><th>Amount</th><th>Status</th></tr>
+<tr><td>Buy</td><td>100 USDT</td><td>Completed</td></tr>
+</table>
+</div><!-- ADMIN --><div id="admin" class="tab hidden">
+<h3>Admin Panel</h3>
+<table class="table">
+<tr><th>User</th><th>Trade</th><th>Action</th></tr>
+<tr><td>User001</td><td>Buy 100 USDT</td><td><button>Approve</button></td></tr>
+</table>
+</div></div>
+</div><!-- TRUST POPUP --><div id="popup" class="popup-bg">
+<div class="popup">
+<h3>Important Notification</h3>
+<p>First mandatory trade: <b>100 USDT or ₹8,300</b></p>
+<p>After completion: trade allowed up to <b>₹1,00,000</b></p>
+<button onclick="closePopup()">I Agree</button>
+</div>
+</div><footer>
+<p>© 2025 USDT P2P Exchange – Demo Version</p>
+</footer><script>
+let price=0,time=300,timerInt;
+function sendOTP(){document.getElementById('otpBox').classList.remove('hidden');alert('OTP:123456')}
+function login(){document.getElementById('loginPage').classList.add('hidden');document.getElementById('main').classList.remove('hidden');tab('market');loadPrice()}
+function tab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function trade(){document.getElementById('popup').style.display='flex'}
+function closePopup(){document.getElementById('popup').style.display='none'}
+async function loadPrice(){let r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=inr');let d=await r.json();price=d.tether.inr;document.getElementById('price').innerText='₹'+price;document.getElementById('rowPrice').innerText='₹'+price}
+function calcBuy(){document.getElementById('buyUsdt').value=(buyInr.value/price||0).toFixed(2)}
+function calcSell(){document.getElementById('sellInr').value=(sellUsdt.value*price||0).toFixed(2)}
+setInterval(()=>{if(timer>0){timer--;document.getElementById('timer').innerText=timer}},1000)
+</script></body>
+</html>
